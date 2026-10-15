@@ -24,7 +24,7 @@ from pathlib import Path
 REPO = os.environ.get("GITHUB_REPOSITORY", "matiasosuna/viajes-publicar")
 COLA = Path(__file__).with_name("cola.json")
 GRAPH = "https://graph.facebook.com/v23.0"
-ANTES = datetime.timedelta(minutes=10)  # el cron corre a los :50 y GitHub suele atrasarse: lo que vence en 10 min ya sale
+ANTES = datetime.timedelta(minutes=2)  # margen: lo que vence en 2 min ya sale
 CLAVES = {"ig": ("META_PAGE_TOKEN", "IG_USER_ID"), "fb": ("META_PAGE_TOKEN", "META_PAGE_ID"),
           "yt": ("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN"), "tk": ("BUFFER_API_KEY", "BUFFER_TIKTOK_CANAL")}
 
@@ -123,6 +123,15 @@ def pendientes(cola, ahora, hay):
             for red in item["redes"] if red not in item.get("hecho", {}) and red in hay]
 
 
+def espera(cola, ahora, hay, hasta=datetime.timedelta(minutes=70)):
+    """Segundos hasta lo próximo que vence en la próxima hora (0 si no hay): la corrida espera y sale a la hora justa,
+    porque GitHub atrasa el cron hasta ~50 min."""
+    proximos = [datetime.datetime.fromisoformat(item["cuando"]) - ANTES for item in cola
+                if any(r not in item.get("hecho", {}) and r in hay for r in item["redes"])]
+    proximos = [p for p in proximos if ahora < p <= ahora + hasta]
+    return (min(proximos) - ahora).total_seconds() if proximos else 0
+
+
 def terminados(cola):
     return [item for item in cola if not item.get("borrado") and all(r in item.get("hecho", {}) for r in item["redes"])]
 
@@ -132,6 +141,10 @@ def main():
     hay = {red for red, claves in CLAVES.items() if all(e.get(k) for k in claves)}
     cola = json.loads(COLA.read_text())
     ahora = datetime.datetime.now(datetime.timezone.utc)
+    if segundos := espera(cola, ahora, hay):
+        print(f"espero {segundos / 60:.0f} min a la hora programada", flush=True)
+        time.sleep(segundos)
+        ahora = datetime.datetime.now(datetime.timezone.utc)
     falla = False
     for item, red in pendientes(cola, ahora, hay):
         try:

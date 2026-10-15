@@ -12,10 +12,19 @@ class TestNube(unittest.TestCase):
         cola = [{"id": "a", "cuando": "2026-10-15T13:00:00-10:00", "redes": ["ig", "yt"], "hecho": {"ig": "x"}},
                 {"id": "b", "cuando": "2026-10-16T13:00:00-10:00", "redes": ["ig"]}]
         antes = datetime.datetime(2026, 10, 15, 12, 40, tzinfo=HST)
-        casi = datetime.datetime(2026, 10, 15, 12, 52, tzinfo=HST)
+        casi = datetime.datetime(2026, 10, 15, 12, 59, tzinfo=HST)
         self.assertEqual(nube.pendientes(cola, antes, {"ig", "yt"}), [])
         self.assertEqual([(i["id"], r) for i, r in nube.pendientes(cola, casi, {"ig", "yt"})], [("a", "yt")])
         self.assertEqual(nube.pendientes(cola, casi, {"ig"}), [])  # YouTube sin claves: espera
+
+    def test_espera_a_la_hora_justa(self):
+        cola = [{"id": "a", "cuando": "2026-10-15T13:00:00-10:00", "redes": ["ig"]}]
+        corrida = datetime.datetime(2026, 10, 15, 12, 25, tzinfo=HST)  # el cron de :20 llegó 5 min tarde
+        self.assertEqual(nube.espera(cola, corrida, {"ig"}), 33 * 60)  # hasta las 12:58 (margen de 2 min)
+        self.assertEqual(nube.espera(cola, corrida - datetime.timedelta(hours=2), {"ig"}), 0)  # falta mucho
+        self.assertEqual(nube.espera(cola, corrida, {"yt"}), 0)  # nada de lo que vence tiene claves
+        hecho = [dict(cola[0], hecho={"ig": "x"})]
+        self.assertEqual(nube.espera(hecho, corrida, {"ig"}), 0)
 
     def test_terminados_y_titulo(self):
         cola = [{"id": "a", "redes": ["ig"], "hecho": {"ig": "x"}}, {"id": "b", "redes": ["ig", "yt"], "hecho": {"ig": "x"}},
