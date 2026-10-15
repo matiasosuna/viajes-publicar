@@ -9,7 +9,14 @@
    "yt",
    "tk"
   ],
-  "titulo_yt": "Atardecer en Spitting Cave, Oahu 🌅"
+  "titulo_yt": "Atardecer en Spitting Cave, Oahu 🌅",
+  "hecho": {
+   "ig": "https://www.instagram.com/reel/DeiGLm7jHoC/",
+   "fb": "https://www.facebook.com/reel/29159565550400589",
+   "yt": "https://youtube.com/shorts/DfLK6m13AVk",
+   "tk": "buffer 6ad15c3b4ed7d375a435b3b9"
+  },
+  "borrado": true
  },
  {
   "id": "2026-10-12-kaneohe-y-kualoa",
