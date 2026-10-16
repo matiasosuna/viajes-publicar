@@ -47,5 +47,21 @@
    "ig": "2026-10-18T13:00:00-10:00",
    "fb": "2026-10-18T13:00:00-10:00"
   }
+ },
+ {
+  "id": "2026-10-15-primer-dia-en-maui",
+  "cuando": "2026-10-17T13:00:00-10:00",
+  "texto": "Primer día en Maui 🌅\n\nArrancó mal: lluvia y despertarme a las 5 para ir al aeropuerto. Pero las cosas pasan por algo… y terminé viendo este amanecer. Después, la casa al lado del río, los perros y un gecko arriba de la compu 🦎\n\n#maui #hawaii #amanecer #viajes #argentinosporelmundo",
+  "redes": [
+   "ig",
+   "fb",
+   "yt",
+   "tk"
+  ],
+  "titulo_yt": "Primer día en Maui: arrancó mal y terminó así 🌅",
+  "cuando_red": {
+   "ig": "2026-10-19T13:00:00-10:00",
+   "fb": "2026-10-19T13:00:00-10:00"
+  }
  }
 ]
