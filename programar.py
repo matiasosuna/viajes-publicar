@@ -1,6 +1,7 @@
 """Programa un video de viaje: lo sube al release "media" y lo anota en cola.json; GitHub lo publica a esa hora (nube.py).
 
 Uso: python3 programar.py <video.mp4> <texto.txt> "2026-10-15 13:00" [--redes ig,fb,yt,tk] [--titulo "título de YouTube"]
+     [--red-cuando "ig=2026-10-18 13:00,fb=2026-10-18 13:00"] [--largo]   (--largo: YouTube como video normal, no Short)
 La hora es de Hawái. El id sale del nombre del video ("2026-10-10 spitting-cave.mp4" → "2026-10-10-spitting-cave").
 """
 import datetime
@@ -21,11 +22,19 @@ def id_de(video):
     return re.sub(r"[^a-z0-9-]+", "-", Path(video).stem.lower()).strip("-")
 
 
-def armar_item(video, texto, cuando, redes=("ig", "fb", "yt", "tk"), titulo=None):
-    hora = datetime.datetime.strptime(cuando, "%Y-%m-%d %H:%M").replace(tzinfo=HST)
-    item = {"id": id_de(video), "cuando": hora.isoformat(), "texto": texto.strip(), "redes": list(redes)}
+def a_iso(cuando):
+    return datetime.datetime.strptime(cuando, "%Y-%m-%d %H:%M").replace(tzinfo=HST).isoformat()
+
+
+def armar_item(video, texto, cuando, redes=("ig", "fb", "yt", "tk"), titulo=None, cuando_red=None, largo=False):
+    """cuando_red: {"ig": "2026-10-18 13:00"} para que una red salga otro día; largo: YouTube como video normal, no Short."""
+    item = {"id": id_de(video), "cuando": a_iso(cuando), "texto": texto.strip(), "redes": list(redes)}
     if titulo:
         item["titulo_yt"] = titulo
+    if cuando_red:
+        item["cuando_red"] = {red: a_iso(h) for red, h in cuando_red.items()}
+    if largo:
+        item["shorts"] = False
     return item
 
 
@@ -41,7 +50,8 @@ def opcion(nombre):
 def main():
     video, texto, cuando = Path(sys.argv[1]), Path(sys.argv[2]).read_text(), sys.argv[3]
     redes = (opcion("--redes") or "ig,fb,yt,tk").split(",")
-    item = armar_item(video, texto, cuando, redes, opcion("--titulo"))
+    cuando_red = dict(p.split("=", 1) for p in opcion("--red-cuando").split(",")) if opcion("--red-cuando") else None
+    item = armar_item(video, texto, cuando, redes, opcion("--titulo"), cuando_red, "--largo" in sys.argv)
     if subprocess.run(["gh", "release", "view", "media", "-R", REPO], capture_output=True).returncode:
         subprocess.run(["gh", "release", "create", "media", "-R", REPO, "--title", "media",
                         "--notes", "Videos programados; se borran solos cuando ya salieron."], check=True)

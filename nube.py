@@ -75,10 +75,10 @@ def facebook(item, e):
     return f"https://www.facebook.com/reel/{ini['video_id']}"
 
 
-def datos_youtube(texto, titulo=None):
-    """Título (máx. 100, con #Shorts) y descripción del Short."""
+def datos_youtube(texto, titulo=None, shorts=True):
+    """Título (máx. 100; con #Shorts salvo la versión horizontal, que es un video normal) y descripción."""
     titulo = (titulo or texto.strip().splitlines()[0]).strip()
-    if "#shorts" not in titulo.lower():
+    if shorts and "#shorts" not in titulo.lower():
         titulo = f"{titulo[:100 - 8].rstrip()} #Shorts"
     return {"snippet": {"title": titulo[:100], "description": texto, "categoryId": "19",  # Viajes y eventos
                         "defaultLanguage": "es", "defaultAudioLanguage": "es"},
@@ -92,13 +92,15 @@ def youtube(item, e):
         video = Path(tmp) / "video.mp4"
         urllib.request.urlretrieve(url_video(item), video)
         _, cab = pedir("https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status",
-                       cuerpo=json.dumps(datos_youtube(item["texto"], item.get("titulo_yt"))).encode(), metodo="POST", cabeceras={
+                       cuerpo=json.dumps(datos_youtube(item["texto"], item.get("titulo_yt"), item.get("shorts", True))).encode(),
+                       metodo="POST", cabeceras={
                            "Authorization": f"Bearer {token}", "Content-Type": "application/json; charset=UTF-8",
                            "X-Upload-Content-Type": "video/mp4", "X-Upload-Content-Length": str(video.stat().st_size)})
         hecho, _ = pedir(cab["Location"], cuerpo=video.read_bytes(), metodo="PUT", timeout=1800,
                          cabeceras={"Authorization": f"Bearer {token}", "Content-Type": "video/mp4"})
     estado = hecho.get("status", {}).get("privacyStatus")
-    return f"https://youtube.com/shorts/{hecho['id']}" + ("" if estado == "public" else f" (quedó {estado})")
+    link = f"https://youtube.com/shorts/{hecho['id']}" if item.get("shorts", True) else f"https://youtu.be/{hecho['id']}"
+    return link + ("" if estado == "public" else f" (quedó {estado})")
 
 
 def tiktok(item, e):
@@ -113,21 +115,25 @@ def tiktok(item, e):
     return f"buffer {r['data']['createPost']['post']['id']}"
 
 
-def toca(item, ahora):
-    return datetime.datetime.fromisoformat(item["cuando"]) - ANTES <= ahora
+def hora(item, red):
+    """Cuándo sale en esa red: "cuando_red" la cambia para una red (p. ej. IG 1 por día, aparte de YouTube y TikTok)."""
+    return datetime.datetime.fromisoformat(item.get("cuando_red", {}).get(red, item["cuando"]))
+
+
+def toca(item, ahora, red=None):
+    return hora(item, red) - ANTES <= ahora
 
 
 def pendientes(cola, ahora, hay):
     """[(item, red)] que ya tocan, no salieron y tienen sus claves."""
-    return [(item, red) for item in cola if toca(item, ahora)
-            for red in item["redes"] if red not in item.get("hecho", {}) and red in hay]
+    return [(item, red) for item in cola for red in item["redes"]
+            if red not in item.get("hecho", {}) and red in hay and toca(item, ahora, red)]
 
 
 def espera(cola, ahora, hay, hasta=datetime.timedelta(minutes=70)):
     """Segundos hasta lo próximo que vence en la próxima hora (0 si no hay): la corrida espera y sale a la hora justa,
     porque GitHub atrasa el cron hasta ~50 min."""
-    proximos = [datetime.datetime.fromisoformat(item["cuando"]) - ANTES for item in cola
-                if any(r not in item.get("hecho", {}) and r in hay for r in item["redes"])]
+    proximos = [hora(item, r) - ANTES for item in cola for r in item["redes"] if r not in item.get("hecho", {}) and r in hay]
     proximos = [p for p in proximos if ahora < p <= ahora + hasta]
     return (min(proximos) - ahora).total_seconds() if proximos else 0
 

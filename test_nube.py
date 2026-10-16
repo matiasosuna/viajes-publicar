@@ -40,6 +40,15 @@ class TestNube(unittest.TestCase):
         otro = {"id": "x", "cuando": "2026-10-15T06:00:00-10:00"}
         self.assertEqual(programar.anotar([viejo, otro], item), [otro, item])  # reprogramado, sin duplicar
 
+    def test_cada_red_con_su_hora_y_youtube_largo(self):
+        item = programar.armar_item("a.mp4", "Maui 🌅\n", "2026-10-17 13:00", ["yt", "ig"], cuando_red={"ig": "2026-10-19 13:00"},
+                                    largo=True)
+        sabado = datetime.datetime(2026, 10, 17, 13, 0, tzinfo=HST)
+        self.assertEqual([r for _, r in nube.pendientes([item], sabado, {"yt", "ig"})], ["yt"])  # IG espera al lunes
+        self.assertEqual(nube.espera([dict(item, hecho={"yt": "x"})], datetime.datetime(2026, 10, 19, 12, 30, tzinfo=HST),
+                                     {"ig"}), 28 * 60)
+        self.assertEqual(nube.datos_youtube(item["texto"], shorts=item["shorts"])["snippet"]["title"], "Maui 🌅")
+
 
 if __name__ == "__main__":
     unittest.main()
