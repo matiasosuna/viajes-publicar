@@ -24,13 +24,15 @@
   "texto": "Kāneʻohe y Kualoa 🌴\n\nEl McDonald's con la vista más linda del mundo, el templo Byodo-In y Kualoa Ranch, donde se filmó Jurassic Park.\n\n#oahu #hawaii #kaneohe #kualoa #viajes #argentinosporelmundo",
   "redes": [
    "yt",
-   "tk"
-  ],
-  "titulo_yt": "El McDonald's con la vista más linda del mundo 🌴 Kāneʻohe, Oahu",
-  "pausadas": [
+   "tk",
    "ig",
    "fb"
-  ]
+  ],
+  "titulo_yt": "El McDonald's con la vista más linda del mundo 🌴 Kāneʻohe, Oahu",
+  "cuando_red": {
+   "ig": "2026-10-17T13:00:00-10:00",
+   "fb": "2026-10-17T13:00:00-10:00"
+  }
  },
  {
   "id": "2026-10-14-ultimo-dia-en-oahu",
