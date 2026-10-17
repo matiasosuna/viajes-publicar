@@ -35,8 +35,11 @@
   },
   "hecho": {
    "yt": "https://youtube.com/shorts/20oErzPS3QQ",
-   "tk": "buffer 6ad2b56652adf2bfae68041a"
-  }
+   "tk": "buffer 6ad2b56652adf2bfae68041a",
+   "ig": "https://www.instagram.com/reel/DenPBIOgVIs/",
+   "fb": "https://www.facebook.com/reel/1470095224971714"
+  },
+  "borrado": true
  },
  {
   "id": "2026-10-14-ultimo-dia-en-oahu",
@@ -72,6 +75,10 @@
   "cuando_red": {
    "ig": "2026-10-19T13:00:00-10:00",
    "fb": "2026-10-19T13:00:00-10:00"
+  },
+  "hecho": {
+   "yt": "https://youtube.com/shorts/bcsK66SXof8",
+   "tk": "buffer 6ad3fdbf0a208cb3233e2355"
   }
  },
  {
@@ -93,6 +100,13 @@
    "fb",
    "yt",
    "tk"
-  ]
+  ],
+  "hecho": {
+   "ig": "https://www.instagram.com/reel/DenPLYNDFHg/",
+   "fb": "https://www.facebook.com/reel/905445755856155",
+   "yt": "https://youtube.com/shorts/oxSN3XtOqiE",
+   "tk": "buffer 6ad3fe20ae173d6e00d8476a"
+  },
+  "borrado": true
  }
 ]
