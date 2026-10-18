@@ -58,8 +58,11 @@
   },
   "hecho": {
    "yt": "https://youtube.com/shorts/q5HhTyj_z0I",
-   "tk": "buffer 6ad3acf8938409f1d096d87c"
-  }
+   "tk": "buffer 6ad3acf8938409f1d096d87c",
+   "ig": "https://www.instagram.com/reel/Dep1-wyApLw/",
+   "fb": "https://www.facebook.com/reel/1032687726456991"
+  },
+  "borrado": true
  },
  {
   "id": "2026-10-07-zoo-panaewa-con-musica",
@@ -125,6 +128,10 @@
    "yt"
   ],
   "titulo_yt": "Primer día en Maui 🌅 Amanecer, la casa del río y un gecko en la compu",
-  "shorts": false
+  "shorts": false,
+  "hecho": {
+   "yt": "https://youtu.be/K9hQ_iEk7VQ"
+  },
+  "borrado": true
  }
 ]
