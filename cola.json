@@ -108,7 +108,14 @@
    "fb",
    "yt",
    "tk"
-  ]
+  ],
+  "hecho": {
+   "ig": "https://www.instagram.com/reel/DeobwHpm0bx/",
+   "fb": "https://www.facebook.com/reel/1433119938993804",
+   "yt": "https://youtube.com/shorts/xhWXTB2qjZc",
+   "tk": "buffer 6ad49b0d0b0d72757a18b33f"
+  },
+  "borrado": true
  },
  {
   "id": "2026-10-15-primer-dia-en-maui-horizontal",
