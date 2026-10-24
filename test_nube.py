@@ -50,5 +50,11 @@ class TestNube(unittest.TestCase):
         self.assertEqual(nube.datos_youtube(item["texto"], shorts=item["shorts"])["snippet"]["title"], "Maui 🌅")
 
 
+class SinInstagramPorDefecto(unittest.TestCase):
+    def test_ig_lo_publica_el_desde_la_app(self):
+        item = programar.armar_item("a.mp4", "Hola\n", "2026-10-25 06:00")
+        self.assertEqual(item["redes"], ["fb", "yt", "tk"])
+
+
 if __name__ == "__main__":
     unittest.main()
